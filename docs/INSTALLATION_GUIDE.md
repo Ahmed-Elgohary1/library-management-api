@@ -23,7 +23,7 @@ The fastest way to get started:
 
 ```bash
 # Clone the repository
-git clone <your-repository-url>
+git clone https://github.com/Ahmed-Elgohary1/library-management-api.git
 cd library-management-api
 
 # Run the automated setup script
@@ -44,7 +44,7 @@ If you prefer manual control over the setup:
 
 ```bash
 # 1. Clone and navigate
-git clone <your-repository-url>
+git clone https://github.com/Ahmed-Elgohary1/library-management-api.git
 cd library-management-api
 
 # 2. Create environment file
@@ -64,7 +64,7 @@ curl http://localhost:3000/health
 
 ```bash
 # Clone the repository
-git clone <your-repository-url>
+git clone https://github.com/Ahmed-Elgohary1/library-management-api.git
 cd library-management-api
 
 # Install Node.js dependencies

@@ -32,7 +32,7 @@ A comprehensive RESTful API for managing library operations, built with Node.js,
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Ahmed-Elgohary1/library-management-api.git
    cd library-management-api
    ```
 
@@ -50,7 +50,7 @@ A comprehensive RESTful API for managing library operations, built with Node.js,
 
 1. **Clone and install dependencies**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Ahmed-Elgohary1/library-management-api.git
    cd library-management-api
    npm install
    ```
