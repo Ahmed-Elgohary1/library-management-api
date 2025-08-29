@@ -1,0 +1,826 @@
+{
+  "info": {
+    "name": "Library Management API",
+    "description": "Complete test collection for Library Management System API covering all functional requirements",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "🔐 Authentication",
+      "item": [
+        {
+          "name": "Login (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('auth_token', response.data.token);",
+                  "    pm.test('Login successful', () => {",
+                  "        pm.expect(response.success).to.be.true;",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/auth/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "profile"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📚 Books Management (CRUD)",
+      "item": [
+        {
+          "name": "1.1 Add a Book",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201 || pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('book_isbn', response.data.isbn);",
+                  "    pm.collectionVariables.set('book_id', response.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Test Book Title\",\n  \"author\": \"Test Author\",\n  \"isbn\": \"1234567890\",\n  \"available_quantity\": 5,\n  \"total_quantity\": 5,\n  \"shelf_location\": \"A1-004\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/books",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books"]
+            }
+          }
+        },
+        {
+          "name": "1.4 List All Books",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/books",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books"]
+            }
+          }
+        },
+        {
+          "name": "1.5 Search Books by Title",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/books/search?q=Great Gatsby",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "Great Gatsby"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "1.6 Search Books by Author",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/books/search?q=Scott Fitzgerald",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "Scott Fitzgerald"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "1.7 Search Books by ISBN",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/books/search?q=9780743273565",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "9780743273565"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "1.2 Update Book Details",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Book Title\",\n  \"author\": \"Updated Author\",\n  \"available_quantity\": 3,\n  \"shelf_location\": \"B2-005\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/books/{book_id}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books", "{book_id}"]
+            }
+          }
+        },
+        {
+          "name": "1.3 Delete a Book",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/api/books/{isbn}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books", "{isbn}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "👥 Borrowers Management (CRUD)",
+      "item": [
+        {
+          "name": "2.1 Register a Borrower",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201 || pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('borrower_id', response.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test.user@email.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/borrowers",
+              "host": ["{{base_url}}"],
+              "path": ["api", "borrowers"]
+            }
+          }
+        },
+        {
+          "name": "2.4 List All Borrowers",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/borrowers",
+              "host": ["{{base_url}}"],
+              "path": ["api", "borrowers"]
+            }
+          }
+        },
+        {
+          "name": "2.5 Search Borrowers",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/borrowers/search?q=Test User",
+              "host": ["{{base_url}}"],
+              "path": ["api", "borrowers", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "Test User"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.6 Get Borrowers with Overdue Books",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/borrowers/overdue",
+              "host": ["{{base_url}}"],
+              "path": ["api", "borrowers", "overdue"]
+            }
+          }
+        },
+        {
+          "name": "2.2 Update Borrower Details",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Test User\",\n  \"email\": \"updated.test@email.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/borrowers/{{borrower_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "borrowers", "{{borrower_id}}"]
+            }
+          }
+        },
+        {
+          "name": "2.3 Delete a Borrower",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/api/borrowers/{{borrower_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "borrowers", "{{borrower_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📖 Borrowing Process",
+      "item": [
+        {
+          "name": "3.1 Check Out a Book",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201 || pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('borrowing_id', response.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"book_id\": \"{{book_id}}\",\n  \"borrower_id\": \"{{borrower_id}}\",\n  \"due_date\": \"2024-12-31\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/borrowings/checkout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "borrowings", "checkout"]
+            }
+          }
+        },
+        {
+          "name": "3.2 Return a Book",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"borrowing_id\": \"{{borrowing_id}}\",\n  \"return_notes\": \"Book returned in good condition\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/borrowings/return",
+              "host": ["{{base_url}}"],
+              "path": ["api", "borrowings", "return"]
+            }
+          }
+        },
+        {
+          "name": "3.3 Check Borrower's Current Books",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/borrowers/{{borrower_id}}/current-books",
+              "host": ["{{base_url}}"],
+              "path": ["api", "borrowers", "{{borrower_id}}", "current-books"]
+            }
+          }
+        },
+        {
+          "name": "3.4 Get Borrower's History",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/borrowers/{{borrower_id}}/history?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "borrowers", "{{borrower_id}}", "history"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "3.5 List Overdue Books",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/borrowings/overdue",
+              "host": ["{{base_url}}"],
+              "path": ["api", "borrowings", "overdue"]
+            }
+          }
+        },
+        {
+          "name": "3.6 Get All Borrowings",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/borrowings?page=1&limit=10&status=active",
+              "host": ["{{base_url}}"],
+              "path": ["api", "borrowings"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "status",
+                  "value": "active"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "3.7 Get Borrowings by Borrower",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/borrowings/borrower/{{borrower_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "borrowings", "borrower", "{{borrower_id}}"]
+            }
+          }
+        },
+        {
+          "name": "3.8 Get Borrowings by Book",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/borrowings/book/{{book_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "borrowings", "book", "{{book_id}}"]
+            }
+          }
+        },
+        {
+          "name": "3.9 Get Single Borrowing",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/borrowings/{{borrowing_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "borrowings", "{{borrowing_id}}"]
+            }
+          }
+        },
+        {
+          "name": "3.10 Extend Due Date",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"new_due_date\": \"2025-01-15\",\n  \"extension_reason\": \"Student needs more time for research\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/borrowings/{{borrowing_id}}/extend",
+              "host": ["{{base_url}}"],
+              "path": ["api", "borrowings", "{{borrowing_id}}", "extend"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📊 Analytics & Export (Bonus)",
+      "item": [
+        {
+          "name": "Get Analytics Summary",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/analytics/summary",
+              "host": ["{{base_url}}"],
+              "path": ["api", "analytics", "summary"]
+            }
+          }
+        },
+        {
+          "name": "Export Overdue Borrowings (CSV)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/analytics/export?type=overdue&format=csv&period=last_month",
+              "host": ["{{base_url}}"],
+              "path": ["api", "analytics", "export"],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "overdue"
+                },
+                {
+                  "key": "format",
+                  "value": "csv"
+                },
+                {
+                  "key": "period",
+                  "value": "last_month"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Export Borrowing Data (XLSX)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/analytics/export?type=borrowings&format=xlsx&period=last_month",
+              "host": ["{{base_url}}"],
+              "path": ["api", "analytics", "export"],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "borrowings"
+                },
+                {
+                  "key": "format",
+                  "value": "xlsx"
+                },
+                {
+                  "key": "period",
+                  "value": "last_month"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🧪 Error Handling Tests",
+      "item": [
+        {
+          "name": "Invalid ISBN Format",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Test Book\",\n  \"author\": \"Test Author\",\n  \"isbn\": \"invalid-isbn\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/books",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books"]
+            }
+          }
+        },
+        {
+          "name": "Missing Required Fields",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@email.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/borrowers",
+              "host": ["{{base_url}}"],
+              "path": ["api", "borrowers"]
+            }
+          }
+        },
+        {
+          "name": "Non-existent Book",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/books/00000000-0000-0000-0000-000000000000",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books", "00000000-0000-0000-0000-000000000000"]
+            }
+          }
+        },
+        {
+          "name": "Access Protected Route Without Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Test Book\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/books",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books"]
+            }
+          }
+        },
+        {
+          "name": "Invalid Borrowing - Book Not Available",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"book_id\": \"non-existent-book-id\",\n  \"borrower_id\": \"{{borrower_id}}\",\n  \"due_date\": \"2024-12-31\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/borrowings/checkout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "borrowings", "checkout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "⚡ Rate Limiting Tests",
+      "item": [
+        {
+          "name": "Book Search (Rate Limited)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/books/search?q=test",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "test"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Checkout (Rate Limited)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"book_id\": \"test-id\",\n  \"borrower_id\": \"test-id\",\n  \"due_date\": \"2024-12-31\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/borrowings/checkout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "borrowings", "checkout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔧 Utility Endpoints",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            }
+          }
+        },
+        {
+          "name": "API Documentation",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": ["{{base_url}}"],
+              "path": [""]
+            }
+          }
+        }
+      ]
+    }
+  ]
+} 
